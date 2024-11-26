@@ -1,0 +1,59 @@
+stages:
+   - documentation
+   - quality
+   - build
+   - unit_test
+   - active_tests
+
+variables:
+  GIT_STRATEGY: clone
+  TIMEOUT: 10m
+
+docs:
+   stage: documentation
+   script:
+      - make docs
+   artifacts:
+      paths:
+         - docs/code/src
+
+versionInfo:
+   stage: documentation
+   script:
+      - make version
+
+styleCheck:
+   stage: quality
+   script:
+      - make style
+
+staticAnalysis:
+   stage: quality
+   script:
+      - make static
+
+buildTests:
+   stage: build
+   script:
+      - make testGame
+   artifacts:
+      paths:
+         - testGame
+
+unitTests:
+   stage: unit_test
+   script:
+      - testGame
+
+memoryLeaks:
+   stage: active_tests
+   script:
+      - make memcheck
+
+coverage:
+   stage: active_tests
+   script:
+      - make coverage
+   artifacts:
+     paths:
+        - coverage
